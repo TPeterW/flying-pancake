@@ -1,0 +1,10 @@
+OPENCV = /usr/local/opencv
+CC = g++
+CPPFLAGS = -O2 -W -Wall -I$(OPENCV)/include/  -I$(OPENCV)/include/opencv/
+LDLIBS = -L$(OPENCV)/lib/ -L$(OPENCV)/bin/ -lopencv_core.dll -lopencv_highgui.dll -lopencv_imgproc.dll
+
+BIN = readwrite imginfo showimg showvideo smooth canny videoedges imdiff
+all: $(BIN)
+
+clean:
+	rm -f $(BIN) *.o *.exe *.stackdump core*
