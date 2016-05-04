@@ -26,3 +26,13 @@
 *.exe
 *.out
 *.app
+
+# OS X
+.DS_Store
+
+# Test Images
+*.png
+*.jpg
+*.jpeg
+*.ppm
+*.pgm
