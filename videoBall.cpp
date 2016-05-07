@@ -68,8 +68,6 @@ int main()
 
         MOG(inputFrame, fgMaskMOG);
         
-        
-        
         imshow(win, fgMaskMOG);
 
         if (waitKey(10) >= 0) // wait up to 30 msec
