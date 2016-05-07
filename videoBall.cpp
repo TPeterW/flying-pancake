@@ -50,29 +50,23 @@ int main()
 
     // namedWindow(win);
     namedWindow(win, 1);
-    Mat lastFrame, currentFrame, inputFrame, screen;
-    Mat diffImage;  // diff
+    Mat inputFrame;
     Point pt;
     pt.x = 500;
     pt.y = 0;
     // int momentumY = 10;     // initial momentum hardcoded as 10
     // int momentumX = 0;
 
-    cap >> lastFrame;
-    cvtColor(lastFrame, lastFrame, CV_BGR2GRAY);
-
-    float threshold = 5.0f;
+    // float threshold = 5.0f;
     // float dist;
     // unsigned char pixel;
     // int x, y;
-    //
 
     double count = 0;
-    while (1) {
+    while (++count) {
         cap >> inputFrame;
 
         MOG(inputFrame, fgMaskMOG);
-
 
         imshow(win, fgMaskMOG);
 
