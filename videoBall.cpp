@@ -1,12 +1,14 @@
-/* 
+/*
  * Joey Button
  *
  *
  */
 
 #include <stdio.h>
-#include "opencv2/opencv.hpp"
+#include "opencv/opencv.hpp"
 
+
+Ptr<BackgroundSubtractor> pMOG2;
 using namespace cv;
 using namespace std;
 
@@ -44,22 +46,23 @@ int main()
     pt.y = 0;
     // int momentumY = 10;     // initial momentum hardcoded as 10
     // int momentumX = 0;
-    
+
     cap >> lastFrame;
     cvtColor(lastFrame, lastFrame, CV_BGR2GRAY);
-    
+
     float threshold = 5.0f;
     float dist;
     unsigned char pixel;
     int x, y;
-    
+    pMOG2 = createBackgroundSubtractorMOG2();
+    double count = 0;
     while (1) {
         cap >> inputFrame;
         currentFrame.release();
         inputFrame.copyTo(currentFrame);
-        
+
         // cvtColor(inputFrame, screen, CV_LOAD_IMAGE_COLOR);       // load from image
-        
+
         // pt.x += momentumX;
         // pt.y += momentumY;
 
@@ -79,16 +82,18 @@ int main()
         // BGRChannels[1] = Mat::zeros(screen.rows, screen.cols, CV_8UC1); // removing Green channel
         // BGRChannels[0] = Mat::zeros(screen.rows, screen.cols, CV_8UC1); // removing Blue channel
         // BGRChannels[2] = Mat::zeros(screen.rows, screen.cols, CV_8UC1); // removing Red channel
-        
+
         // merge(BGRChannels, 3, screen);
-        
+
         // drawCircle(screen, pt);
-        
+
         // Find difference between two frames
-        cvtColor(inputFrame, currentFrame, CV_BGR2GRAY);    
-        diffImage.release();
-        absdiff(lastFrame, currentFrame, diffImage);
-        
+        cvtColor(inputFrame, currentFrame, CV_BGR2GRAY);
+
+
+        //diffImage.release();
+        //absdiff(lastFrame, currentFrame, diffImage);
+        pMOG2->apply(count++, currentFrame);
         // Mat foregroundMask = Mat::zeros(diffImage.rows, diffImage.cols, CV_8UC1);
         // float threshold = 30.0f;
         // float dist;
@@ -96,42 +101,29 @@ int main()
         // for (y = 0; y < diffImage.rows; ++y) {
         //     for (x = 0; x < diffImage.cols; ++x) {
         //         // Vec3b pixel = diffImage.at<Vec3b>(x, y);
-                
+
         //         // dist = sqrt(pixel[0] * pixel[0] + pixel[1] * pixel[1] + pixel[2] * pixel[2]);
-                
+
         //         // if (dist > threshold)       // big enough difference
         //         //     foregroundMask.at<Vec3b>(x, y) = 255;
         //         // printf("%d %d\n");
         //     }
         // }
-        
+
         // GaussianBlur(edges, edges, Size(7,7), 1.5, 1.5);
         // Canny(edges, edges, 15, 30, 3);
-        
+
         printf("%d\n", diffImage.cols);
-        
-        
-        for (y = 0; y < diffImage.rows; y++) {
-            for (x = 0; x < diffImage.cols; x++) {
-                pixel = diffImage.at<uchar>(x, y);
-                
-                dist = sqrt(pixel * pixel);
-                printf("%d %d %d\n", x, y, pixel);
-                
-                if (dist > threshold)       // big enough difference
-                    diffImage.at<uchar>(x, y) = 255;
-                else
-                    diffImage.at<uchar>(x, y) = 0;
-            }
-        }
+
+
         // char *haha;
-        // std::cin >> haha; 
-        
+        // std::cin >> haha;
+
         lastFrame.release();
         currentFrame.copyTo(lastFrame);
-        
+
         imshow(win, diffImage);
-        
+
         if (waitKey(10) >= 0) // wait up to 30 msec
 	        break;
     }
