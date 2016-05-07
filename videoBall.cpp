@@ -38,17 +38,30 @@ int main()
     namedWindow(win, 1);
     Mat frame, screen;
     Point pt;
+    pt.x = 500;
+    pt.y = 0;
+    int momentumY = 10;
+    int momentumX = 0;
 
     while (1) {
         cap >> frame;
         cvtColor(frame, screen, CV_LOAD_IMAGE_COLOR);
 
+        pt.x += momentumX;
+        pt.y += momentumY;
 
-        pt.x = 500;
-        pt.y = 500;
+        if(pt.y<990){
+          momentumY += 1;
+        }else {
+          momentumY = -(momentumY/2);
+        }
+        if (momentumY*momentumY <= 49 && pt.y > 990){
+          momentumY =0;
+        }
 
 
         //This will zero out the entire image, and draw a red circle
+
         Mat BGRChannels[3];
         split(screen,BGRChannels);                                  // split the BGR channesl
         BGRChannels[1]=Mat::zeros(screen.rows,screen.cols,CV_8UC1); // removing Green channel
