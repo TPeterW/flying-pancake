@@ -38,6 +38,7 @@ int main()
     // namedWindow(win);
     namedWindow(win, 1);
     Mat lastFrame, currentFrame, inputFrame, screen;
+    Mat diffImage;  // diff
     Point pt;
     pt.x = 500;
     pt.y = 0;
@@ -45,9 +46,16 @@ int main()
     // int momentumX = 0;
     
     cap >> lastFrame;
+    cvtColor(lastFrame, lastFrame, CV_BGR2GRAY);
+    
+    float threshold = 5.0f;
+    float dist;
+    unsigned char pixel;
+    int x, y;
     
     while (1) {
         cap >> inputFrame;
+        currentFrame.release();
         inputFrame.copyTo(currentFrame);
         
         // cvtColor(inputFrame, screen, CV_LOAD_IMAGE_COLOR);       // load from image
@@ -69,48 +77,62 @@ int main()
         // Mat BGRChannels[3];
         // split(screen, BGRChannels);                                  // split the BGR channesl
         // BGRChannels[1] = Mat::zeros(screen.rows, screen.cols, CV_8UC1); // removing Green channel
-        // BGRChannels[0] = Mat::zeros(screen.rows, screen.cols, CV_8UC1); // removing Green channel
-        // BGRChannels[2] = Mat::zeros(screen.rows, screen.cols, CV_8UC1); // removing Green channel
-        // // TODO: what?
+        // BGRChannels[0] = Mat::zeros(screen.rows, screen.cols, CV_8UC1); // removing Blue channel
+        // BGRChannels[2] = Mat::zeros(screen.rows, screen.cols, CV_8UC1); // removing Red channel
         
         // merge(BGRChannels, 3, screen);
         
         // drawCircle(screen, pt);
         
         // Find difference between two frames
-        Mat diffImage;
-        // cvtColor(inputFrame, currentFrame, CV_BGR2GRAY);       
+        cvtColor(inputFrame, currentFrame, CV_BGR2GRAY);    
+        diffImage.release();
         absdiff(lastFrame, currentFrame, diffImage);
-        imshow(win, diffImage);
         
-        Mat foregroundMask = Mat::zeros(diffImage.rows, diffImage.cols, CV_8UC1);
-        float threshold = 30.0f;
-        float dist;
-        int x, y;
-        for (y = 0; y < diffImage.rows; ++y) {
-            for (x = 0; x < diffImage.cols; ++x) {
-                Vec3b pixel = diffImage.at<Vec3b>(x, y);
+        // Mat foregroundMask = Mat::zeros(diffImage.rows, diffImage.cols, CV_8UC1);
+        // float threshold = 30.0f;
+        // float dist;
+        // int x, y;
+        // for (y = 0; y < diffImage.rows; ++y) {
+        //     for (x = 0; x < diffImage.cols; ++x) {
+        //         // Vec3b pixel = diffImage.at<Vec3b>(x, y);
                 
-                dist = sqrt(pixel[0] * pixel[0] + pixel[1] * pixel[1] + pixel[2] * pixel[2]);
+        //         // dist = sqrt(pixel[0] * pixel[0] + pixel[1] * pixel[1] + pixel[2] * pixel[2]);
                 
-                if (dist > threshold)       // big enough difference
-                    foregroundMask.at<Vec3b>(x, y) = 255;
-            }
-        }
+        //         // if (dist > threshold)       // big enough difference
+        //         //     foregroundMask.at<Vec3b>(x, y) = 255;
+        //         // printf("%d %d\n");
+        //     }
+        // }
         
         // GaussianBlur(edges, edges, Size(7,7), 1.5, 1.5);
         // Canny(edges, edges, 15, 30, 3);
         
+        printf("%d\n", diffImage.cols);
         
-        // Pack the image
-        // imshow(win, screen);
-        // imshow(win, foregroundMask);
-        // imshow(win, inputFrame);
-        // imshow(win, lastFrame);
         
+        for (y = 0; y < diffImage.rows; y++) {
+            for (x = 0; x < diffImage.cols; x++) {
+                pixel = diffImage.at<uchar>(x, y);
+                
+                dist = sqrt(pixel * pixel);
+                printf("%d %d %d\n", x, y, pixel);
+                
+                if (dist > threshold)       // big enough difference
+                    diffImage.at<uchar>(x, y) = 255;
+                else
+                    diffImage.at<uchar>(x, y) = 0;
+            }
+        }
+        // char *haha;
+        // std::cin >> haha; 
+        
+        lastFrame.release();
         currentFrame.copyTo(lastFrame);
         
-        if (waitKey(30) >= 0) // wait up to 30 msec
+        imshow(win, diffImage);
+        
+        if (waitKey(10) >= 0) // wait up to 30 msec
 	        break;
     }
 
