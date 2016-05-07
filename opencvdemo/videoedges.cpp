@@ -16,8 +16,8 @@ int main()
     int cam = 0; // default camera
     VideoCapture cap(cam);
     if (!cap.isOpened()) {
-	fprintf(stderr, "cannot open camera %d\n", cam); 
-	exit(1); 
+	fprintf(stderr, "cannot open camera %d\n", cam);
+	exit(1);
     }
 
     //namedWindow(win);
@@ -32,6 +32,6 @@ int main()
         if (waitKey(30) >= 0) // wait up to 30 msec
 	    break;
     }
-    
+
     return 0;
 }
