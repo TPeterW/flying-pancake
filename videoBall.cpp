@@ -12,80 +12,10 @@
 using namespace cv;
 using namespace std;
 
-#define RADIUS 32
-#define THRESH 240.0f
-
 const char *win = "video";
-
-
-void drawCircle(Mat img, Point center, int radius)
-{
-    int thickness = -1;
-    int lineType = 8;
-
-    circle( img,
-            center,
-            radius,
-            Scalar( 255, 255, 255 ),
-            thickness,
-            lineType);
-}
-
-void calcDir(Point *momentum, Point *pt, int height, int width) {
-      pt->x += momentum->x;
-      pt->y += momentum->y;
-
-      if (pt->y < height) {
-           // Accelerate due to Gravity
-          momentum->y += 3;
-      } else {
-          //Bounce on the bottom
-          momentum->x = momentum->x * 0.9;
-          momentum->y = -(momentum->y * .6);   // bounce back up and halt it
-          pt->y = height;
-      }
-
-      // off the top
-      if (pt->y < RADIUS) {
-            pt->y = RADIUS;
-            momentum->y = -(momentum->y * .6);
-            momentum->x = momentum->x * .9;
-      }
-      //Bounce on the Right
-      if (pt->x > width) {
-            pt->x=width;
-            momentum->x = -(momentum->x * .6);
-            momentum->y = momentum->y * .9;
-      }
-      //Bounce on the Left
-      if (pt->x < RADIUS) {
-            pt->x=RADIUS;
-            momentum->x = -(momentum->x * .6);
-            momentum->y = momentum->y * .9;
-      }
-      //Slow to stop if low momentum
-      if (momentum->y * momentum->y <= 25 && pt->y == height){
-          momentum->y = momentum->y / (2);
-          momentum->x = momentum->x / (2);
-      }
-
-}
-
-double getOverlap(Mat *ballFrame, Mat *handFrame, Point *center)
-{
-    // ballFrame->release();
-    drawCircle(*ballFrame, *center, RADIUS / 2);
-    // imshow(win, *ballFrame);
-    // waitKey(50000);
-    
-    bitwise_and(*ballFrame, *handFrame, *ballFrame);
-    
-    return sum(*ballFrame)[0] / 255;
-}
 
 int main(void)
 {   
-    // hello();
     int cam = 0; // default camera
     VideoCapture cap(cam);
     if (!cap.isOpened()) {
@@ -163,43 +93,6 @@ int main(void)
         sum = getOverlap(&ballFrame, &handFrame, &small);
         momentum.x -= sum;              momentum.y -= sum; 
         
-        
-        // bitwise_and(circ, fgMaskMOG, circ); // THIS IS FOR CALCULATING INTERSECTION
-        // anything white, in circ, is intersecting the ball to be drawn --
-        // Change the momentum here
-        // Clever
-        
-        // overlap = sum(circ)[0];
-        // if (overlap > 10000.0)
-        //   momentum.y -= 10;
-
-        // EVERYTHING ABOVE THIS SHOULD BE CALCULATING WHERE TO DRAW
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
         // EVERYTHING BELOW THIS LINE SHOULD BE DRAWING THE outFrame
         outFrame.setTo(Scalar(0,0,0));      // set all of outFrame to be black
         outFrame.setTo(Scalar(255, 255, 255), foregroundMask);
@@ -214,12 +107,3 @@ int main(void)
 
     return 0;
 }
-
-/*
-    Mat BGRChannels[3];
-    split(outFrame,BGRChannels); // split the BGR channesl
-    BGRChannels[1]=Mat::zeros(outFrame.rows,outFrame.cols,CV_8UC1);// removing Green channel
-    merge(BGRChannels,3,outFrame); // pack the image
-
-    waitKey(0);
-*/
