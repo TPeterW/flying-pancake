@@ -98,6 +98,8 @@ int main()
     int height = inputFrame.rows-2*RADIUS;
     int width = inputFrame.cols-2*RADIUS;
 
+    double overlap;
+
     while (++count) {
         cap >> inputFrame;
 
@@ -113,8 +115,8 @@ int main()
         //anything white, in circ, is intersecting the ball to be drawn --
         //Change the momentum here
 
-
-        if ( sum(circ)[0] > 10000.0)
+        overlap = sum(circ)[0];
+        if ( overlap > 10000.0)
           momentum.y -= 10;
 
         //EVERYTHING ABOVE THIS SHOULD BE CALCULATING WHERE TO DRAW
