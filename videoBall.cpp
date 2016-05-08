@@ -24,8 +24,10 @@ int main(int argc, char **argv)
     else if (argc == 2) {
         if (!strcmp(argv[1], "-m"))
             reverseMirror = true;
-        else
-            fprintf(stderr, "Usage: videoBall [-m]\n");    
+        else {
+            fprintf(stderr, "Usage: videoBall [-m]\n");
+            exit(1);   
+        }
     }
     
     int cam = 0; // default camera
