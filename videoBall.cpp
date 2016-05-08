@@ -1,25 +1,19 @@
 /*
  * Joey Button
- *
- *
+ * Felix Wang
+ * Peter Wang
  */
 
 #include <stdio.h>
 #include <opencv2/video/background_segm.hpp>
 #include "opencv2/opencv.hpp"
-
-// #include <iostream>
-// #include <sstream>
-
-
+#include "physics.hpp"
 
 using namespace cv;
 using namespace std;
+
 #define RADIUS 32
 #define THRESH 240.0f
-
-
-
 
 const char *win = "video";
 
@@ -109,15 +103,16 @@ int main()
         MOG(inputFrame, fgMaskMOG);
 
         circ.setTo(Scalar(0,0,0));
-        drawCircle(circ,pt);//for testing
+        drawCircle(circ, pt);   // for testing
 
 
-        bitwise_and(circ, fgMaskMOG, circ);//THIS IS FOR CALCULATING INTERSECTION
-        //anything white, in circ, is intersecting the ball to be drawn --
-        //Change the momentum here
-
-
-        if ( sum(circ)[0] > 10000.0)
+        bitwise_and(circ, fgMaskMOG, circ); // THIS IS FOR CALCULATING INTERSECTION
+        // anything white, in circ, is intersecting the ball to be drawn --
+        // Change the momentum here
+        // Clever
+        
+        
+        if (sum(circ)[0] > 10000.0)
           momentum.y -= 10;
 
         // EVERYTHING ABOVE THIS SHOULD BE CALCULATING WHERE TO DRAW
@@ -128,10 +123,10 @@ int main()
         outFrame.setTo(Scalar(255, 255, 255), mask);
         
         
-        drawCircle(outFrame, pt);           // The real one
-        imshow(win, outFrame);              // The real one
+        drawCircle(outFrame, pt);
+        imshow(win, outFrame);
 
-        if (waitKey(1) >= 0) // wait up to 30 msec
+        if (waitKey(1) >= 0)        // listening for key press
 	        break;
     }
 
