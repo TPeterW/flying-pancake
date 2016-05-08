@@ -4,10 +4,10 @@
 using namespace cv;
 using namespace std;
 
-Mat calcMovement(cv::Mat ballFrame, cv::Mat cameraFrame)
+Mat calcMovement(Mat ballFrame, Mat cameraFrame)
 {
-    cv::Mat outFrame;
-    bitwise_and(ballFrame, cameraFrame, outFrame);
+    Mat outFrame;
+    bitwise_and(ballFrame, cameraFrame, outFrame);      // temporary
     
     return outFrame;
 }
