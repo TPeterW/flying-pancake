@@ -3,7 +3,7 @@
 
 #define RADIUS 32
 #define THRESH 240.0f
-#define ELASTICITY 7000
+#define ELASTICITY 5000
 
 using namespace cv;
 using namespace std;
@@ -12,7 +12,7 @@ using namespace std;
 double getOverlap(Mat *, Mat *, Point *);
 
 // draws the circle
-void drawCircle(Mat, Point, int);
+void drawCircle(Mat, Point, int, Scalar);
 
 // calculate the ball's direction to move
 void calcDir(Point *momentum, Point *pt, int height, int width);
