@@ -16,6 +16,7 @@
 using namespace cv;
 using namespace std;
 #define RADIUS 32
+#define THRESH 240.0f
 
 
 
@@ -39,7 +40,7 @@ void drawCircle(Mat img, Point center)
             lineType);
 }
 
-void calcDir(Point *momentum, Point *pt, int height, int width){
+void calcDir(Point *momentum, Point *pt, int height){
       pt->x += momentum->x;
       pt->y += momentum->y;
 
@@ -48,7 +49,7 @@ void calcDir(Point *momentum, Point *pt, int height, int width){
            // Accelerate due to Gravity
           momentum->y += 1;
       } else {
-          momentum->x = momentum->x *0.9;
+          momentum->x = momentum->x * 0.9;
           momentum->y = -(momentum->y * .5);   // bounce back up and halt it
           pt->y = height;
       }
@@ -85,34 +86,36 @@ int main()
 
     Point momentum;
     momentum.x = 0;
-    momentum.y = 150;
+    momentum.y = 100;
 
-    double count = 0;
+    int count = 0;
 
     cap >> inputFrame;
     cvtColor(inputFrame, outFrame, CV_LOAD_IMAGE_COLOR);
 
-    int height = inputFrame.rows-2*RADIUS;
-    int width = inputFrame.cols-2*RADIUS;
-
+    int height = inputFrame.rows - 2 * RADIUS;
+    // int width = inputFrame.cols - 2 * RADIUS;
+    
+    Mat mask;
+    
     while (++count) {
         cap >> inputFrame;
 
-        calcDir(&momentum, &pt, height, width);
-
+        calcDir(&momentum, &pt, height);
+        
         MOG(inputFrame, fgMaskMOG);
 
 
-        //EVERYTHING ABOVE THIS SHOULD BE CALCULATING WHERE TO DRAW
+        // EVERYTHING ABOVE THIS SHOULD BE CALCULATING WHERE TO DRAW
 
-        //EVERYTHING BELOW THIS LINE SHOULD BE DRAWING THE outFrame
-        outFrame.setTo(Scalar(0,0,0)); //set all of outFrame to be black
-
-        drawCircle(fgMaskMOG,pt);//for testing
-        imshow(win, fgMaskMOG);//for testing
-
-        // drawCircle(outFrame,pt);//The real one
-        // imshow(win, outFrame);//The real one
+        // EVERYTHING BELOW THIS LINE SHOULD BE DRAWING THE outFrame
+        outFrame.setTo(Scalar(0,0,0));      // set all of outFrame to be black
+        mask = fgMaskMOG > THRESH;            // have to put here otherwise floating point exception 
+        outFrame.setTo(Scalar(255, 255, 255), mask);
+        
+        
+        drawCircle(outFrame, pt);           // The real one
+        imshow(win, outFrame);              // The real one
 
         if (waitKey(1) >= 0) // wait up to 30 msec
 	        break;
