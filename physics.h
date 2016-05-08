@@ -4,7 +4,8 @@
 using namespace cv;
 using namespace std;
 
+void hello(void);
 // calculate the movement of the ball
-cv::Mat calcMovement(cv::Mat &, cv::Mat &);
+// cv::Mat calcMovement(cv::Mat , cv::Mat &);
 
 #endif

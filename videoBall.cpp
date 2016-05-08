@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <opencv2/video/background_segm.hpp>
 #include "opencv2/opencv.hpp"
-#include "physics.hpp"
+#include "physics.h"
 
 using namespace cv;
 using namespace std;
@@ -31,29 +31,42 @@ void drawCircle(Mat img, Point center, int radius)
             lineType);
 }
 
-void calcDir(Point *momentum, Point *pt, int height) {
+void calcDir(Point *momentum, Point *pt, int height, int width) {
       pt->x += momentum->x;
       pt->y += momentum->y;
 
       if (pt->y < height) {
            // Accelerate due to Gravity
-          momentum->y += 1;
+          momentum->y += 3;
       } else {
+          //Bounce on the bottom
           momentum->x = momentum->x * 0.9;
-          momentum->y = -(momentum->y * .5);   // bounce back up and halt it
+          momentum->y = -(momentum->y * .6);   // bounce back up and halt it
           pt->y = height;
       }
 
       // off the top
       if (pt->y < RADIUS) {
             pt->y = RADIUS;
-            momentum->y += 1;
-            momentum->y = -(momentum->y * .5);
-            momentum->x = momentum->x *0.9;
+            momentum->y = -(momentum->y * .6);
+            momentum->x = momentum->x * .9;
       }
-
-      if (momentum->y * momentum->y <= 49 && pt->y > height){
-          momentum->y = 0;
+      //Bounce on the Right
+      if (pt->x > width) {
+            pt->x=width;
+            momentum->x = -(momentum->x * .6);
+            momentum->y = momentum->y * .9;
+      }
+      //Bounce on the Left
+      if (pt->x < RADIUS) {
+            pt->x=RADIUS;
+            momentum->x = -(momentum->x * .6);
+            momentum->y = momentum->y * .9;
+      }
+      //Slow to stop if low momentum
+      if (momentum->y * momentum->y <= 25 && pt->y == height){
+          momentum->y = momentum->y / (2);
+          momentum->x = momentum->x / (2);
       }
 
 }
@@ -72,6 +85,7 @@ double getOverlap(Mat *ballFrame, Mat *handFrame, Point *center)
 
 int main(void)
 {   
+    // hello();
     int cam = 0; // default camera
     VideoCapture cap(cam);
     if (!cap.isOpened()) {
@@ -92,7 +106,7 @@ int main(void)
     pt.y = 0;
 
     Point momentum;
-    momentum.x = 0;
+    momentum.x = 100;
     momentum.y = 100;
 
     cap >> inputFrame;
@@ -100,7 +114,7 @@ int main(void)
     cvtColor(inputFrame, circ, CV_BGR2GRAY);
 
     int height = inputFrame.rows - 2 * RADIUS;
-    // int width = inputFrame.cols - 2 * RADIUS;
+    int width = inputFrame.cols - 2 * RADIUS;
 
     // double overlap;
     int count = 0;
@@ -110,8 +124,8 @@ int main(void)
     Mat foregroundMask, backgroundMask;
     while (++count) {
         cap >> inputFrame;
-        
-        calcDir(&momentum, &pt, height);
+
+        calcDir(&momentum, &pt, height, width);
 
         MOG(inputFrame, fgMaskMOG);
         
@@ -190,8 +204,8 @@ int main(void)
         outFrame.setTo(Scalar(0,0,0));      // set all of outFrame to be black
         outFrame.setTo(Scalar(255, 255, 255), foregroundMask);
         
-        
         drawCircle(outFrame, pt, RADIUS);
+        
         imshow(win, outFrame);
 
         if (waitKey(1) >= 0)        // listening for key press
