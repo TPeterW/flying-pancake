@@ -13,13 +13,25 @@ using namespace cv;
 using namespace std;
 
 const char *win = "video";
+static bool reverseMirror = false;
 
-int main(void)
+int main(int argc, char **argv)
 {
+    if (argc > 2) {
+        fprintf(stderr, "Error: Please limit arguments to 1 or none.\n");
+        exit(1);
+    }
+    else if (argc == 2) {
+        if (!strcmp(argv[1], "-m"))
+            reverseMirror = true;
+        else
+            fprintf(stderr, "Usage: videoBall [-m]\n");    
+    }
+    
     int cam = 0; // default camera
     VideoCapture cap(cam);
     if (!cap.isOpened()) {
-        fprintf(stderr, "cannot open camera %d\n", cam);
+        fprintf(stderr, "Error: Cannot open camera %d\n", cam);
         exit(1);
     }
 
@@ -52,8 +64,14 @@ int main(void)
     Point small;
     Mat ballFrame, handFrame;
     Mat foregroundMask, backgroundMask;
+    Mat reverseFrame;
     while (++count) {
         cap >> inputFrame;
+        
+        if (reverseMirror) {
+            inputFrame.copyTo(reverseFrame);
+            flip(reverseFrame, inputFrame, 1);
+        }
 
         calcDir(&momentum, &pt, height, width);
 
