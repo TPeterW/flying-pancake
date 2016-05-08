@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <opencv2/video/background_segm.hpp>
 #include "opencv2/opencv.hpp"
-#include "physics.hpp"
+#include "physics.h"
 
 using namespace cv;
 using namespace std;
@@ -31,36 +31,50 @@ void drawCircle(Mat img, Point center)
             lineType);
 }
 
-void calcDir(Point *momentum, Point *pt, int height) {
+void calcDir(Point *momentum, Point *pt, int height, int width) {
       pt->x += momentum->x;
       pt->y += momentum->y;
 
 
       if (pt->y < height) {
            // Accelerate due to Gravity
-          momentum->y += 1;
+          momentum->y += 3;
       } else {
+          //Bounce on the bottom
           momentum->x = momentum->x * 0.9;
-          momentum->y = -(momentum->y * .5);   // bounce back up and halt it
+          momentum->y = -(momentum->y * .6);   // bounce back up and halt it
           pt->y = height;
       }
 
       //off the top
       if (pt->y < RADIUS) {
             pt->y=RADIUS;
-            momentum->y += 1;
-            momentum->y = -(momentum->y * .5);
+            momentum->y = -(momentum->y * .6);
             momentum->x = momentum->x *0.9;
       }
-
-      if (momentum->y * momentum->y <= 49 && pt->y > height){
-          momentum->y = 0;
+      //Bounce on the Right
+      if (pt->x > width) {
+            pt->x=width;
+            momentum->x = -(momentum->x * .6);
+            momentum->y = momentum->y *0.9;
+      }
+      //Bounce on the Left
+      if (pt->x < RADIUS) {
+            pt->x=RADIUS;
+            momentum->x = -(momentum->x * .6);
+            momentum->y = momentum->y *0.9;
+      }
+      //Slow to stop if low momentum
+      if (momentum->y * momentum->y <= 25 && pt->y == height){
+          momentum->y = momentum->y/(2);
+          momentum->x = momentum->x/(2);
       }
 
 }
 
 int main()
 {
+    hello();
     int cam = 0; // default camera
     VideoCapture cap(cam);
     if (!cap.isOpened()) {
@@ -81,7 +95,7 @@ int main()
     pt.y = 0;
 
     Point momentum;
-    momentum.x = 0;
+    momentum.x = 100;
     momentum.y = 100;
 
     int count = 0;
@@ -91,6 +105,7 @@ int main()
     cvtColor(inputFrame, circ, CV_BGR2GRAY);
 
     int height = inputFrame.rows - 2 * RADIUS;
+    int width = inputFrame.cols - 2 * RADIUS;
 
     double overlap;
 
@@ -98,7 +113,7 @@ int main()
     while (++count) {
         cap >> inputFrame;
 
-        calcDir(&momentum, &pt, height);
+        calcDir(&momentum, &pt, height, width);
 
         MOG(inputFrame, fgMaskMOG);
 
@@ -110,7 +125,7 @@ int main()
         // anything white, in circ, is intersecting the ball to be drawn --
         // Change the momentum here
         // Clever
-        
+
         overlap = sum(circ)[0];
         if ( overlap > 10000.0)
           momentum.y -= 10;
@@ -121,8 +136,8 @@ int main()
         outFrame.setTo(Scalar(0,0,0));      // set all of outFrame to be black
         mask = fgMaskMOG > THRESH;            // have to put here otherwise floating point exception
         outFrame.setTo(Scalar(255, 255, 255), mask);
-        
-        
+
+
         drawCircle(outFrame, pt);
         imshow(win, outFrame);
 
