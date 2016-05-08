@@ -3,7 +3,7 @@
 
 #define RADIUS 32
 #define THRESH 240.0f
-#define ELASTICITY 10000
+#define ELASTICITY 7000
 
 using namespace cv;
 using namespace std;

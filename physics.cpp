@@ -4,10 +4,11 @@
 
 double getOverlap(Mat *ballFrame, Mat *handFrame, Point *center)
 {
+    ballFrame->setTo(Scalar(0, 0, 0));
     drawCircle(*ballFrame, *center, RADIUS / 2);
-    
+
     bitwise_and(*ballFrame, *handFrame, *ballFrame);
-    
+
     return sum(*ballFrame)[0] / ELASTICITY;
 }
 
@@ -32,7 +33,7 @@ void calcDir(Point *momentum, Point *pt, int height, int width) {
            // Accelerate due to Gravity
           momentum->y += 3;
       } else {
-          //Bounce on the bottom
+          // Bounce on the bottom
           momentum->x = momentum->x * 0.9;
           momentum->y = -(momentum->y * .6);   // bounce back up and halt it
           pt->y = height;
@@ -61,5 +62,7 @@ void calcDir(Point *momentum, Point *pt, int height, int width) {
           momentum->y = momentum->y / (2);
           momentum->x = momentum->x / (2);
       }
+      momentum->y = momentum->y * 0.95;
+      momentum->x = momentum->x * 0.95;
 
 }
