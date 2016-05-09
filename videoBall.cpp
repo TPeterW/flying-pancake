@@ -72,7 +72,7 @@ int main(int argc, char **argv)
         
         if (reverseMirror) {
             inputFrame.copyTo(reverseFrame);
-            flip(reverseFrame, inputFrame, 1);
+            flip(reverseFrame, inputFrame, 1);      // 1 ~ flip against y axis
         }
 
         calcDir(&momentum, &pt, height, width);
