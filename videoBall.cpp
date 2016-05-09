@@ -12,7 +12,7 @@
 using namespace cv;
 using namespace std;
 
-const char *win = "video";
+const char *win = "Flying Pancake";
 static bool reverseMirror = false;
 
 int main(int argc, char **argv)
