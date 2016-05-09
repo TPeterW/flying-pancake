@@ -78,7 +78,7 @@ int main(int argc, char **argv)
         calcDir(&momentum, &pt, height, width);
 
         MOG(inputFrame, fgMaskMOG);
-
+        
         // blank canvas
         circ.setTo(Scalar(0,0,0));
 
