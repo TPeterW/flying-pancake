@@ -26,10 +26,10 @@ int main(int argc, char **argv)
             reverseMirror = true;
         else {
             fprintf(stderr, "Usage: videoBall [-m]\n");
-            exit(1);   
+            exit(1);
         }
     }
-    
+
     int cam = 0; // default camera
     VideoCapture cap(cam);
     if (!cap.isOpened()) {
@@ -69,7 +69,7 @@ int main(int argc, char **argv)
     Mat reverseFrame;
     while (++count) {
         cap >> inputFrame;
-        
+
         if (reverseMirror) {
             inputFrame.copyTo(reverseFrame);
             flip(reverseFrame, inputFrame, 1);      // 1 ~ flip against y axis
@@ -78,7 +78,7 @@ int main(int argc, char **argv)
         calcDir(&momentum, &pt, height, width);
 
         MOG(inputFrame, fgMaskMOG);
-        
+
         // blank canvas
         circ.setTo(Scalar(0,0,0));
 
@@ -120,9 +120,7 @@ int main(int argc, char **argv)
         drawCircle(outFrame, pt, RADIUS);
 
         imshow(win, outFrame);
-        if (count%30 == 0){
-          printf("m.x: %d\tm.y: %d\n",momentum.x,momentum.y);
-        }
+
         if (waitKey(1) >= 0)        // listening for key press
 	        break;
     }
