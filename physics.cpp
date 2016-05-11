@@ -64,5 +64,4 @@ void calcDir(Point *momentum, Point *pt, int height, int width) {
       }
       momentum->y = momentum->y * 0.95;
       momentum->x = momentum->x * 0.95;
-
 }
