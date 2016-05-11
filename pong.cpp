@@ -49,8 +49,8 @@ int main(int argc, char **argv)
     
     // initial momentum
     Point momentum;
-    momentum.x = 20;
-    momentum.y = 5;
+    momentum.x = 0;
+    momentum.y = 0;
     
     Mat circ;
     cvtColor(inputFrame, outFrame, CV_LOAD_IMAGE_COLOR);
@@ -90,25 +90,25 @@ int main(int argc, char **argv)
             small.x = halfRad;   small.y = halfRad;
             sum = getOverlap(&ballFrame, &handFrame, &small);
             momentum.x += pt.x < width / 2 ? sum : 0;
-            momentum.y += sum * 3;
+            momentum.y += sum;
             
             // top right
             small.x = 3 * halfRad;  small.y = halfRad;
             sum = getOverlap(&ballFrame, &handFrame, &small);
-            momentum.x += pt.x >= width / 2 ? sum : 0;
-            momentum.y += sum * 3;
+            momentum.x += pt.x >= width / 2 ? -sum : 0;
+            momentum.y += sum;
             
             // bottom left
             small.x = halfRad;    small.y = 3 * halfRad;
             sum = getOverlap(&ballFrame, &handFrame, &small);
             momentum.x += pt.x < width / 2 ? sum : 0;
-            momentum.y -= sum * 2;
+            momentum.y -= sum;
 
             // bottom right
             small.x = 3 * halfRad;   small.y = 3 * halfRad;
             sum = getOverlap(&ballFrame, &handFrame, &small);
-            momentum.x += pt.x >= width / 2 ? sum : 0;
-            momentum.y -= sum * 2;  
+            momentum.x += pt.x >= width / 2 ? -sum : 0;
+            momentum.y -= sum;  
             
             // outFrame.setTo(Scalar(0, 0, 0));
             // outFrame.setTo(Scalar(255, 255, 255), foregroundMask); 
@@ -123,8 +123,17 @@ int main(int argc, char **argv)
         
         imshow(win, outFrame);
         
-        if (waitKey(1) >= 0)        // listening for key press
-	        break;
+        // listening for key press
+        char c = waitKey(5);
+        if (c >= 0) {
+            if (c == 'r') {
+                pt.x = width / 2;
+                pt.y = height / 2;
+                continue;
+            }
+            else
+                break;
+        }
     }
     
     return 0;
