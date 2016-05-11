@@ -78,39 +78,39 @@ int pongDir(Point *momentum, Point *pt, int height, int width)
     pt->x += momentum->x;
     pt->y += momentum->y;
     
-    // bounce on the Right
-    if (pt->x > width - RADIUS) {
+    // stuck on the Right
+    if (pt->x >= width - RADIUS) {
         pt->x = width - RADIUS;
         momentum->x = 0;
         momentum->y = 0;
         return 1;   // left wins
     }
     
-    // bounce on the Left
-    if (pt->x < RADIUS) {
+    // stuck on the Left
+    if (pt->x <= RADIUS) {
         pt->x = RADIUS;
         momentum->x = 0;
         momentum->y = 0;
         return -1;  // right wins
     }
     
-    if (pt->y < height - RADIUS) {
-        // Accelerate due to Gravity
-        momentum->y += 1;
-        return 0;
-    } else {
-        pt->y = height - RADIUS;     // make sure at bottom
-        // Bounce on the bottom
-        momentum->x = momentum->x * 1.05;
-        momentum->y = -(momentum->y * 1.05);   // bounce back up
-        return 0;
-    }
-
     // off the top
     if (pt->y < RADIUS) {
         pt->y = RADIUS;
         momentum->x = momentum->x * 1.05;
         momentum->y = -(momentum->y * 1.05);
+        return 0;
+    }
+    
+    if (pt->y < height - RADIUS) {
+        // Accelerate due to Gravity
+        momentum->y += 1;
+    }
+    else {
+        pt->y = height - RADIUS;     // make sure at bottom
+        // Bounce on the bottom
+        momentum->x = momentum->x * 1.05;
+        momentum->y = -(momentum->y * 1.05);   // bounce back up
         return 0;
     }
     

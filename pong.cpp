@@ -36,7 +36,7 @@ int main(int argc, char **argv)
     Mat fgMaskMOG;
     BackgroundSubtractorMOG2 MOG;
     
-    Mat inputFrame;
+    Mat inputFrame, outFrame;
     cap >> inputFrame;
     
     int height = inputFrame.rows;
@@ -50,12 +50,17 @@ int main(int argc, char **argv)
     // initial momentum
     Point momentum;
     momentum.x = 20;
-    momentum.y = -10;
+    momentum.y = 5;
+    
+    Mat circ;
+    cvtColor(inputFrame, outFrame, CV_LOAD_IMAGE_COLOR);
+    cvtColor(inputFrame, circ, CV_BGR2GRAY);
     
     int count = 0;
     int sum;
-    Mat reverseFrame
+    Mat reverseFrame;
     Mat ballFrame, handFrame;
+    Mat foregroundMask, backgroundMask;
     Point small;
     while(++count) {
         cap >> inputFrame;
@@ -67,52 +72,60 @@ int main(int argc, char **argv)
         
         MOG(inputFrame, fgMaskMOG);
         
-        switch (pongDir(&momentum, &pt, height, width)) {
-            case 0: // touches left wall
-                break;
-            default:
-                drawCircle(fgMaskMOG, pt, RADIUS);
-                imshow(win, fgMaskMOG);
-                goto repeat;
-        }
-        
-        // blank canvas
-        circ.setTo(Scalar(0, 0, 0));
-        Rect ballRegion(pt.x - RADIUS, pt.y - RADIUS, 2 * RADIUS, 2 * RADIUS);
-        ballFrame = circ(ballRegion);
-        
         foregroundMask = fgMaskMOG > THRESH;
         backgroundMask = fgMaskMOG <= THRESH;
-        fgMaskMOG.setTo(Scalar(255, 255, 255), foregroundMask);
-        fgMaskMOG.setTo(Scalar(0, 0, 0), backgroundMask);
-        handFrame = fgMaskMOG(ballRegion);
         
-        int halfRad = RADIUS / 2;
+        if (!pongDir(&momentum, &pt, height, width)) {   // still moving
+            // blank canvas
+            circ.setTo(Scalar(0, 0, 0));
+            Rect ballRegion(pt.x - RADIUS, pt.y - RADIUS, 2 * RADIUS, 2 * RADIUS);
+            ballFrame = circ(ballRegion);
+            
+            fgMaskMOG.setTo(Scalar(255, 255, 255), foregroundMask);     // clean up
+            fgMaskMOG.setTo(Scalar(0, 0, 0), backgroundMask);
+            handFrame = fgMaskMOG(ballRegion);
+            
+            int halfRad = RADIUS / 2;
+            // top left
+            small.x = halfRad;   small.y = halfRad;
+            sum = getOverlap(&ballFrame, &handFrame, &small);
+            momentum.x += pt.x < width / 2 ? sum : 0;
+            momentum.y += sum * 3;
+            
+            // top right
+            small.x = 3 * halfRad;  small.y = halfRad;
+            sum = getOverlap(&ballFrame, &handFrame, &small);
+            momentum.x += pt.x >= width / 2 ? sum : 0;
+            momentum.y += sum * 3;
+            
+            // bottom left
+            small.x = halfRad;    small.y = 3 * halfRad;
+            sum = getOverlap(&ballFrame, &handFrame, &small);
+            momentum.x += pt.x < width / 2 ? sum : 0;
+            momentum.y -= sum * 2;
+
+            // bottom right
+            small.x = 3 * halfRad;   small.y = 3 * halfRad;
+            sum = getOverlap(&ballFrame, &handFrame, &small);
+            momentum.x += pt.x >= width / 2 ? sum : 0;
+            momentum.y -= sum * 2;  
+            
+            // outFrame.setTo(Scalar(0, 0, 0));
+            // outFrame.setTo(Scalar(255, 255, 255), foregroundMask); 
+            
+            // drawCircle(outFrame, pt, RADIUS);
+        }
         
-        // top left
-        small.x = halfRad;   small.y = halfRad;
-        sum = getOverlap(&ballFrame, &handFrame, &small);
-        if (pt.x < width / 2)
-            momentum.x += sum > 0 ? sum * 3 : 0;
-        else
-            momentum.x += sum < 0 ? sum * 3 : 0;
-        momentum.y += sum * 3;
+        outFrame.setTo(Scalar(0, 0, 0));
+        outFrame.setTo(Scalar(255, 255, 255), foregroundMask); 
         
-        // top right
-        small.x = 3 * halfRad;  small.y = halfRad;
-        sum = getOverlap(&ballFrame, &handFrame, &small);
-        if (pt.x < width / 2)
-            momentum.x += sum > 0 ? sum * 3 : 0;
-        else
-            momentum.x += sum < 0 ? sum * 3 : 0;
+        drawCircle(outFrame, pt, RADIUS);
         
-        // TODO:
-        
-        
-        repeat:
+        imshow(win, outFrame);
         
         if (waitKey(1) >= 0)        // listening for key press
 	        break;
     }
     
+    return 0;
 }

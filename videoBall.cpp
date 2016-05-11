@@ -53,8 +53,7 @@ int main(int argc, char **argv)
 
     int height = inputFrame.rows - 2 * RADIUS;
     int width = inputFrame.cols - 2 * RADIUS;
-
-    // double overlap;
+    
     int count = 0;
     int sum;
     Point small;
