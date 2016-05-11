@@ -17,4 +17,7 @@ void drawCircle(Mat, Point, int);
 // calculate the ball's direction to move
 void calcDir(Point *momentum, Point *pt, int height, int width);
 
+// calculate the pong ball's direction to move
+int pongDir(Point *momentum, Point *pt, int height, int width);
+
 #endif

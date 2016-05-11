@@ -1,9 +1,3 @@
-/*
- * Joey Button
- * Felix Wang
- * Peter Wang
- */
-
 #include <stdio.h>
 #include <opencv2/video/background_segm.hpp>
 #include "opencv2/opencv.hpp"
