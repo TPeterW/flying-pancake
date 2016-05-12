@@ -45,8 +45,8 @@ int main(int argc, char **argv)
 
     // initial position
     Point pt;
-    pt.x = width / 2;
-    pt.y = height / 2;
+    pt.x = RADIUS;
+    pt.y = height / 4;
 
     // initial momentum
     Point momentum;
@@ -68,11 +68,36 @@ int main(int argc, char **argv)
     int score=0, left=0, right=0;
     int timer = 50; // 50 frames between points are scored
 
+
+    /*
+    A score frame is used because drawing text is a VERY expensive operation,
+    adding two images together is almost 10x faster than using the putText function
+
+    SO:
+      A mask is created with the current score, and it is only updated between
+      points being scored.
+    */
     //Initialize the scoreFrame here
+    string text = "First to 5 Points Wins";
+
+    int fontFace = FONT_HERSHEY_SCRIPT_SIMPLEX;
+    int baseline=0;
+    double fontScale = 3;
+    Size textSize = getTextSize(text, fontFace,
+                              fontScale, 8, &baseline);
+
+
+    // center the text
+    Point textOrg((scoreFrame.cols - textSize.width)/2,
+                  (scoreFrame.rows + textSize.height)/2);
     scoreFrame = scoreFrame > 256;
-    putText(scoreFrame, to_string(left), Point(50,height-50), FONT_HERSHEY_SCRIPT_SIMPLEX, 3, Scalar(255,255,255), 1, 8, false );
-    // Put right score on right
-    putText(scoreFrame, to_string(right), Point(width-50,height-50), FONT_HERSHEY_SCRIPT_SIMPLEX, 3, Scalar(255,255,255), 1, 8, false );
+
+    putText(scoreFrame, "First to 5 points wins", textOrg, fontFace, fontScale,
+                Scalar(255,255,255), 1, 8, false );
+
+    //Hackish way to Initialize the game
+    right = -1;
+    score = -1;
 
     while(++count) {
         cap >> inputFrame;
@@ -129,10 +154,20 @@ int main(int argc, char **argv)
           reset_board(&pt, &momentum, width, height);
           if (score >0){ left +=1; }
           else{         right += 1; }
+
+          //Zero out scoreFrame
           scoreFrame = scoreFrame > 256;
-          putText(scoreFrame, to_string(left), Point(50,height-50), FONT_HERSHEY_SCRIPT_SIMPLEX, 2, Scalar(255,255,255), 1, 8, false );
+
+          //Put score on the left
+          putText(scoreFrame, to_string(left), Point(50-RADIUS,height-50),
+                  FONT_HERSHEY_SCRIPT_SIMPLEX, 2, Scalar(255,255,255), 1, 8, false );
           // Put right score on right
-          putText(scoreFrame, to_string(right), Point(width-50,height-50), FONT_HERSHEY_SCRIPT_SIMPLEX, 2, Scalar(255,255,255), 1, 8, false );
+          putText(scoreFrame, to_string(right), Point(width-50,height-50),
+                  FONT_HERSHEY_SCRIPT_SIMPLEX, 2, Scalar(255,255,255), 1, 8, false );
+
+          //Draw the games dividing line
+          line(scoreFrame, Point(width/2,0), Point(width/2,height), Scalar(0,255,0),
+             2, 0,0 );
 
           if ( right >= 5 || left >= 5){
             //Game over, stop playing
