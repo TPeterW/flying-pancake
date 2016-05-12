@@ -9,6 +9,7 @@ using namespace std;
 const char *win = "Flying Pancake";
 static bool reverseMirror = true;
 
+void game_over(int, int, Mat *);
 
 int main(int argc, char **argv)
 {
@@ -81,15 +82,15 @@ int main(int argc, char **argv)
     string text = "First to 5 Points Wins";
 
     int fontFace = FONT_HERSHEY_SCRIPT_SIMPLEX;
-    int baseline=0;
+    int baseline = 0;
     double fontScale = 3;
     Size textSize = getTextSize(text, fontFace,
                               fontScale, 8, &baseline);
 
 
     // center the text
-    Point textOrg((scoreFrame.cols - textSize.width)/2,
-                  (scoreFrame.rows + textSize.height)/2);
+    Point textOrg((scoreFrame.cols - textSize.width) / 2,
+                  (scoreFrame.rows + textSize.height) / 2);
     scoreFrame = scoreFrame > 256;
 
     putText(scoreFrame, "First to 5 points wins", textOrg, fontFace, fontScale,
@@ -108,7 +109,9 @@ int main(int argc, char **argv)
         }
         cvtColor(inputFrame, outFrame, CV_LOAD_IMAGE_COLOR);
         MOG(inputFrame, fgMaskMOG);
-
+        
+        game_over(0, 0, &fgMaskMOG);
+        
         foregroundMask = fgMaskMOG > THRESH;
         backgroundMask = fgMaskMOG <= THRESH;
         score = pongDir(&momentum, &pt, height, width);
@@ -158,19 +161,19 @@ int main(int argc, char **argv)
           scoreFrame = scoreFrame > 256;
 
           // put score on the left
-          putText(scoreFrame, to_string(left), Point(50-RADIUS,height-50),
-                  FONT_HERSHEY_SCRIPT_SIMPLEX, 2, Scalar(255,255,255), 1, 8, false );
+          putText(scoreFrame, to_string(left), Point(50 - RADIUS, height - 50),
+                  FONT_HERSHEY_SCRIPT_SIMPLEX, 2, Scalar(255, 255, 255), 1, 8, false);
           // put right score on right
           putText(scoreFrame, to_string(right), Point(width-50,height-50),
-                  FONT_HERSHEY_SCRIPT_SIMPLEX, 2, Scalar(255,255,255), 1, 8, false );
+                  FONT_HERSHEY_SCRIPT_SIMPLEX, 2, Scalar(255, 255, 255), 1, 8, false);
 
           //Draw the games dividing line
-          line(scoreFrame, Point(width / 2,0), Point(width / 2,height), Scalar(0, 255, 0),
+          line(scoreFrame, Point(width / 2, 0), Point(width / 2, height), Scalar(0, 255, 0),
              2, 0, 0);
 
-          if ( right >= 5 || left >= 5){
+          if (right >= 1 || left >= 1) {
             // game over, stop playing
-            game_over(right, left);
+            game_over(right, left, &fgMaskMOG);
             break;
           }
         }
@@ -180,24 +183,23 @@ int main(int argc, char **argv)
         // outFrame.setTo(Scalar(0, 0, 0));
         // outFrame.setTo(Scalar(255, 255, 255), foregroundMask);
 
-        //Set the color of the ball here.
-        cvtColor(foregroundMask,foregroundMask ,COLOR_GRAY2BGR);
+        // set the color of the ball here.
+        cvtColor(foregroundMask, foregroundMask, COLOR_GRAY2BGR);
         addWeighted(outFrame, 0.75, foregroundMask, 0.25, 1, outFrame, -1);
-        drawCircle(outFrame, pt, RADIUS, Scalar( 0, 0, 255 ));
+        drawCircle(outFrame, pt, RADIUS, Scalar(0, 0, 255));
 
 
         // Put score frame onto image
         addWeighted(outFrame, 0.75, scoreFrame, 1.0, 1, outFrame, -1);
 
 
-        imshow(win,outFrame);
+        imshow(win, outFrame);
 
         // listening for key press
         char c = waitKey(30);
         if (c >= 0) {
             if (c == 'r') {
-                pt.x = width / 2;
-                pt.y = height / 2;
+                reset_board(&pt, &momentum, width, height);
                 continue;
             }
             else
@@ -208,7 +210,26 @@ int main(int argc, char **argv)
     return 0;
 }
 
-void game_over(int right, int left) {
+void game_over(int right, int left, Mat *fgMaskMOG) {
+    Mat ggFrame;
+    cvtColor(*fgMaskMOG, ggFrame, COLOR_GRAY2BGR);    
+    
+    ostringstream sysStr;
+    sysStr << (left > right ? "Left" : "Right") << " Wins!";
+    string text = String(sysStr.str()); 
+    int fontFace = CV_FONT_HERSHEY_DUPLEX;
+    int baseline = 0;
+    double fontScale = 3;
+    Size textSize = getTextSize(text, fontFace,
+                              fontScale, 8, &baseline);
+    Point textOrg((ggFrame.cols - textSize.width) / 2,
+                  (ggFrame.rows + textSize.height) / 2);
+    
+    putText(ggFrame, text, textOrg, fontFace, fontScale,
+                Scalar(0, 0, 255), 1, 8, false);
+    
+    imshow(win, ggFrame);
+    
     waitKey(5000);
     exit(0);
 }
