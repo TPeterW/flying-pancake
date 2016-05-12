@@ -9,6 +9,29 @@ using namespace std;
 const char *win = "Flying Pancake";
 static bool reverseMirror = true;
 
+void game_over(int right, int left, Mat scoreFrame, VideoCapture cap ){
+    Mat inFrame;
+    cap >> inFrame;
+
+    while (1){
+      char c = waitKey(30);
+      if (c >= 0) {
+          if (c == 'r') {
+            //Start a new game
+              return 0;
+          }
+          else if ( c == 'd'){
+            //should be done
+            exit(0);
+
+          }
+          else
+              continue;
+      }
+
+    }
+
+}
 
 int main(int argc, char **argv)
 {
@@ -170,7 +193,7 @@ int main(int argc, char **argv)
 
           if ( right >= 5 || left >= 5){
             // game over, stop playing
-            game_over(right, left);
+            game_over(right, left, scoreFrame, cap);
             break;
           }
         }
