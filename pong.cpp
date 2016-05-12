@@ -65,7 +65,7 @@ int main(int argc, char **argv)
     Mat foregroundMask, backgroundMask;
 
     Point small;
-    int score=0, left=0, right=0;
+    int score = 0, left = 0, right = 0;
     int timer = 50; // 50 frames between points are scored
 
 
@@ -77,7 +77,7 @@ int main(int argc, char **argv)
       A mask is created with the current score, and it is only updated between
       points being scored.
     */
-    //Initialize the scoreFrame here
+    // initialize the scoreFrame here
     string text = "First to 5 Points Wins";
 
     int fontFace = FONT_HERSHEY_SCRIPT_SIMPLEX;
@@ -93,9 +93,9 @@ int main(int argc, char **argv)
     scoreFrame = scoreFrame > 256;
 
     putText(scoreFrame, "First to 5 points wins", textOrg, fontFace, fontScale,
-                Scalar(255,255,255), 1, 8, false );
+                Scalar(255,255,255), 1, 8, false);
 
-    //Hackish way to Initialize the game
+    // Hackish way to Initialize the game
     right = -1;
     score = -1;
 
@@ -146,32 +146,31 @@ int main(int argc, char **argv)
             sum = getOverlap(&ballFrame, &handFrame, &small);
             momentum.x += pt.x >= width / 2 ? -sum : 0;
             momentum.y -= sum;
-
-
-        }else if (!timer--){
-          //someone scored, so decrement timer and reset when timer = 0
+        }
+        else if (!timer--){
+          // someone scored, so decrement timer and reset when timer = 0
           timer = 50;
           reset_board(&pt, &momentum, width, height);
-          if (score >0){ left +=1; }
-          else{         right += 1; }
+          if (score > 0) left += 1;
+          else          right += 1;
 
-          //Zero out scoreFrame
+          // Zero out scoreFrame
           scoreFrame = scoreFrame > 256;
 
-          //Put score on the left
+          // put score on the left
           putText(scoreFrame, to_string(left), Point(50-RADIUS,height-50),
                   FONT_HERSHEY_SCRIPT_SIMPLEX, 2, Scalar(255,255,255), 1, 8, false );
-          // Put right score on right
+          // put right score on right
           putText(scoreFrame, to_string(right), Point(width-50,height-50),
                   FONT_HERSHEY_SCRIPT_SIMPLEX, 2, Scalar(255,255,255), 1, 8, false );
 
           //Draw the games dividing line
-          line(scoreFrame, Point(width/2,0), Point(width/2,height), Scalar(0,255,0),
-             2, 0,0 );
+          line(scoreFrame, Point(width / 2,0), Point(width / 2,height), Scalar(0, 255, 0),
+             2, 0, 0);
 
           if ( right >= 5 || left >= 5){
-            //Game over, stop playing
-            // game_over(right,left);
+            // game over, stop playing
+            game_over(right, left);
             break;
           }
         }
@@ -207,4 +206,9 @@ int main(int argc, char **argv)
     }
 
     return 0;
+}
+
+void game_over(int right, int left) {
+    waitKey(5000);
+    exit(0);
 }

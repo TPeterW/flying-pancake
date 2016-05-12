@@ -129,6 +129,6 @@ void reset_board(Point * pt, Point * momentum, int width, int height){
       pt->x = width / 2;
       pt->y = height / 2;
 
-      momentum->x = rand()%20 -10;
-      momentum->y = rand()%20 -10;
+      momentum->x = rand() % 20 - 10;
+      momentum->y = rand() % 20 - 10;
 }
