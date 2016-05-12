@@ -10,7 +10,6 @@ const char *win = "Flying Pancake";
 static bool reverseMirror = true;
 
 
-
 int main(int argc, char **argv)
 {
     if (argc > 2) {
@@ -38,7 +37,7 @@ int main(int argc, char **argv)
     Mat fgMaskMOG;
     BackgroundSubtractorMOG2 MOG;
 
-    Mat inputFrame, outFrame;
+    Mat inputFrame, outFrame, scoreFrame;
     cap >> inputFrame;
 
     int height = inputFrame.rows;
@@ -56,6 +55,7 @@ int main(int argc, char **argv)
 
     Mat circ;
     cvtColor(inputFrame, outFrame, CV_LOAD_IMAGE_COLOR);
+    cvtColor(inputFrame, scoreFrame, CV_LOAD_IMAGE_COLOR);
     cvtColor(inputFrame, circ, CV_BGR2GRAY);
 
     int count = 0;
@@ -63,9 +63,17 @@ int main(int argc, char **argv)
     Mat reverseFrame;
     Mat ballFrame, handFrame;
     Mat foregroundMask, backgroundMask;
+
     Point small;
     int score=0, left=0, right=0;
     int timer = 50; // 50 frames between points are scored
+
+    //Initialize the scoreFrame here
+    scoreFrame = scoreFrame > 256;
+    putText(scoreFrame, to_string(left), Point(50,height-50), FONT_HERSHEY_SCRIPT_SIMPLEX, 3, Scalar(255,255,255), 1, 8, false );
+    // Put right score on right
+    putText(scoreFrame, to_string(right), Point(width-50,height-50), FONT_HERSHEY_SCRIPT_SIMPLEX, 3, Scalar(255,255,255), 1, 8, false );
+
     while(++count) {
         cap >> inputFrame;
 
@@ -121,10 +129,16 @@ int main(int argc, char **argv)
           reset_board(&pt, &momentum, width, height);
           if (score >0){ left +=1; }
           else{         right += 1; }
+          scoreFrame = scoreFrame > 256;
+          putText(scoreFrame, to_string(left), Point(50,height-50), FONT_HERSHEY_SCRIPT_SIMPLEX, 2, Scalar(255,255,255), 1, 8, false );
+          // Put right score on right
+          putText(scoreFrame, to_string(right), Point(width-50,height-50), FONT_HERSHEY_SCRIPT_SIMPLEX, 2, Scalar(255,255,255), 1, 8, false );
 
-        }else if ( right >= 5 || left >= 5){
-          //Game over, stop playing
-
+          if ( right >= 5 || left >= 5){
+            //Game over, stop playing
+            // game_over(right,left);
+            break;
+          }
         }
         // outFrame -= Scalar(50,50,50);
         // cvtColor(foregroundMask, inputFrame, CV_LOAD_IMAGE_COLOR);
@@ -137,7 +151,11 @@ int main(int argc, char **argv)
         addWeighted(outFrame, 0.75, foregroundMask, 0.25, 1, outFrame, -1);
         drawCircle(outFrame, pt, RADIUS, Scalar( 0, 0, 255 ));
 
-        // imshow(win, outFrame);
+
+        // Put score frame onto image
+        addWeighted(outFrame, 0.75, scoreFrame, 1.0, 1, outFrame, -1);
+
+
         imshow(win,outFrame);
 
         // listening for key press
