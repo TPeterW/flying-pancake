@@ -110,8 +110,6 @@ int main(int argc, char **argv)
         cvtColor(inputFrame, outFrame, CV_LOAD_IMAGE_COLOR);
         MOG(inputFrame, fgMaskMOG);
         
-        game_over(0, 0, &fgMaskMOG);
-        
         foregroundMask = fgMaskMOG > THRESH;
         backgroundMask = fgMaskMOG <= THRESH;
         score = pongDir(&momentum, &pt, height, width);
@@ -171,7 +169,7 @@ int main(int argc, char **argv)
           line(scoreFrame, Point(width / 2, 0), Point(width / 2, height), Scalar(0, 255, 0),
              2, 0, 0);
 
-          if (right >= 1 || left >= 1) {
+          if (right >= 5 || left >= 5) {
             // game over, stop playing
             game_over(right, left, &fgMaskMOG);
             break;
