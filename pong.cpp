@@ -126,20 +126,19 @@ int main(int argc, char **argv)
           //Game over, stop playing
 
         }
-
-
-
-
-        outFrame -= Scalar(50,50,50);
+        // outFrame -= Scalar(50,50,50);
         // cvtColor(foregroundMask, inputFrame, CV_LOAD_IMAGE_COLOR);
 
         // outFrame.setTo(Scalar(0, 0, 0));
         // outFrame.setTo(Scalar(255, 255, 255), foregroundMask);
 
         //Set the color of the ball here.
+        cvtColor(foregroundMask,foregroundMask ,COLOR_GRAY2BGR);
+        addWeighted(outFrame, 0.75, foregroundMask, 0.25, 1, outFrame, -1);
         drawCircle(outFrame, pt, RADIUS, Scalar( 0, 0, 255 ));
 
-        imshow(win, outFrame);
+        // imshow(win, outFrame);
+        imshow(win,outFrame);
 
         // listening for key press
         char c = waitKey(30);
