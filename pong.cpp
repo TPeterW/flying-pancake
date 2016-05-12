@@ -124,7 +124,7 @@ int main(int argc, char **argv)
         imshow(win, outFrame);
         
         // listening for key press
-        char c = waitKey(5);
+        char c = waitKey(30);
         if (c >= 0) {
             if (c == 'r') {
                 pt.x = width / 2;
