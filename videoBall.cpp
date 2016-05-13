@@ -1,9 +1,3 @@
-/*
- * Joey Button
- * Felix Wang
- * Peter Wang
- */
-
 #include <stdio.h>
 #include <opencv2/video/background_segm.hpp>
 #include "opencv2/opencv.hpp"
@@ -59,8 +53,7 @@ int main(int argc, char **argv)
 
     int height = inputFrame.rows - 2 * RADIUS;
     int width = inputFrame.cols - 2 * RADIUS;
-
-    // double overlap;
+    
     int count = 0;
     int sum;
     Point small;
@@ -117,7 +110,7 @@ int main(int argc, char **argv)
         outFrame.setTo(Scalar(0,0,0));      // set all of outFrame to be black
         outFrame.setTo(Scalar(255, 255, 255), foregroundMask);
 
-        drawCircle(outFrame, pt, RADIUS);
+        drawCircle(outFrame, pt, RADIUS, Scalar(255, 255, 255));
 
         imshow(win, outFrame);
 

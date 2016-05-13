@@ -26,6 +26,8 @@
 *.exe
 *.out
 *.app
+videoBall
+pong
 
 # OS X
 .DS_Store
