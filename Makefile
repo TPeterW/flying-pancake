@@ -10,8 +10,8 @@ LINK = physics
 VBALL = videoBall
 PONG = pong
 
-# all: videoBall pong
-all: pong
+all: videoBall pong
+# all: pong
 
 clean:
 	rm -f $(VBALL) $(PONG) *.o core*
