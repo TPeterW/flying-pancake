@@ -14,11 +14,7 @@ all: videoBall pong
 # all: pong
 
 clean:
-<<<<<<< HEAD
-	rm -rf $(BIN) *.o core* *.dSYM
-=======
 	rm -rf $(VBALL) $(PONG) *.o core* *.dSYM
->>>>>>> origin/dev
 
 videoBall: $(VBOBJ)
 		$(CC) -o$(VBALL) $(CPPFLAGS) $(VBSRC) $(LDLIBS)

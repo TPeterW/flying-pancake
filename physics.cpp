@@ -64,10 +64,6 @@ void calcDir(Point *momentum, Point *pt, int height, int width)
           momentum->y = momentum->y / (2);
           momentum->x = momentum->x / (2);
       }
-<<<<<<< HEAD
-      // momentum->y = momentum->y * 0.95;
-      // momentum->x = momentum->x * 0.95;
-=======
       momentum->y = momentum->y * 0.95;
       momentum->x = momentum->x * 0.95;
 }
@@ -133,7 +129,6 @@ void reset_board(Point *pt, Point *momentum, int width, int height){
 
     pt->x = width / 2;
     pt->y = height / 2;
->>>>>>> origin/dev
 
     momentum->x = rand() % 20 - 10;
     momentum->y = rand() % 20 - 10;
