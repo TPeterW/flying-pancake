@@ -9,8 +9,8 @@ using namespace std;
 const char *win = "Flying Pancake";
 static bool reverseMirror = true;
 
-
 void game_over(int, int, Mat *);
+
 
 int main(int argc, char **argv)
 {
@@ -123,7 +123,7 @@ int main(int argc, char **argv)
             fgMaskMOG.setTo(Scalar(255, 255, 255), foregroundMask);     // clean up
             fgMaskMOG.setTo(Scalar(0, 0, 0), backgroundMask);
             handFrame = fgMaskMOG(ballRegion);
-
+            
             int halfRad = RADIUS / 2;
             // top left
             small.x = halfRad;   small.y = halfRad;
