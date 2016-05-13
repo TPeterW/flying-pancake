@@ -1,9 +1,3 @@
-/*
- * Joey Button
- * Felix Wang
- * Peter Wang
- */
-
 #include <stdio.h>
 #include <opencv2/video/background_segm.hpp>
 #include <opencv2/contrib/contrib.hpp>
@@ -15,7 +9,7 @@
 using namespace cv;
 using namespace std;
 
-const char *win = "video";
+const char *win = "Flying Pancake";
 static bool reverseMirror = false;
 
 int main(int argc, char **argv)
@@ -29,14 +23,14 @@ int main(int argc, char **argv)
             reverseMirror = true;
         else {
             fprintf(stderr, "Usage: videoBall [-m]\n");
-            exit(1);   
+            exit(1);
         }
     }
-    
+
     int cam = 0; // default camera
     VideoCapture cap(cam);
     if (!cap.isOpened()) {
-        fprintf(stderr, "Cannot open camera %d\n", cam);
+        fprintf(stderr, "Error: Cannot open camera %d\n", cam);
         exit(1);
     }
 
@@ -63,15 +57,14 @@ int main(int argc, char **argv)
 
     int height = inputFrame.rows - 2 * RADIUS;
     int width = inputFrame.cols - 2 * RADIUS;
-
-    // double overlap;
+    
     int count = 0;
     int sum;
     Point small;
     Mat ballFrame, handFrame;
     Mat foregroundMask, backgroundMask;
     Mat reverseFrame;
-
+    
     while (++count) {
         cap >> inputFrame;
         
@@ -79,7 +72,7 @@ int main(int argc, char **argv)
             inputFrame.copyTo(reverseFrame);
             flip(reverseFrame, inputFrame, 1);      // 1 ~ flip against y axis
         }
-
+        
         calcDir(&momentum, &pt, height, width);     // according to last frame
 
         MOG(inputFrame, fgMaskMOG);
@@ -121,17 +114,11 @@ int main(int argc, char **argv)
         // EVERYTHING BELOW THIS LINE SHOULD BE DRAWING THE outFrame
         outFrame.setTo(Scalar(0,0,0));      // set all of outFrame to be black
         outFrame.setTo(Scalar(255, 255, 255), foregroundMask);
+        
+        drawCircle(outFrame, pt, RADIUS, Scalar(255, 255, 255));
 
-        // applyColorMap(foregroundMask, colored, 1);
-        //
-        // addWeighted(inputFrame, 0.75, colored, 0.25, 0.0, inputFrame);
-
-        drawCircle(inputFrame, pt, RADIUS, Scalar(255,0,255));
-
-        imshow(win, inputFrame);
-        if (count % 30 == 0){
-            printf("m.x: %d\tm.y: %d\n", momentum.x, momentum.y);
-        }
+        imshow(win, outFrame);
+        
         if (waitKey(1) >= 0)        // listening for key press
 	        break;
     }

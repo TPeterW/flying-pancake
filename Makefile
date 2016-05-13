@@ -1,26 +1,39 @@
 CC = g++
 CPPFLAGS = -O2 -W -Wall -g
-SRC = physics.cpp videoBall.cpp
-OBJ = videoBall.o physics.o
+VBSRC = physics.cpp videoBall.cpp
+PGSRC = physics.cpp pong.cpp
+VBOBJ = videoBall.o physics.o
+PGOBJ = pong.o physics.o
 LDLIBS = -lopencv_core -lopencv_highgui -lopencv_imgproc -lopencv_video
 
 LINK = physics
-BIN = videoBall
+VBALL = videoBall
+PONG = pong
 
-all: videoBall
-	$(CC) -o$(BIN) $(CPPFLAGS) $(SRC) $(LDLIBS)
+all: videoBall pong
+# all: pong
 
 clean:
+<<<<<<< HEAD
 	rm -rf $(BIN) *.o core* *.dSYM
+=======
+	rm -rf $(VBALL) $(PONG) *.o core* *.dSYM
+>>>>>>> origin/dev
 
-videoBall: $(OBJ)
-		$(CC) -o$(BIN) $(CPPFLAGS) $(SRC) $(LDLIBS)
+videoBall: $(VBOBJ)
+		$(CC) -o$(VBALL) $(CPPFLAGS) $(VBSRC) $(LDLIBS)
+		
+pong: $(PGOBJ)
+		$(CC) -o$(PONG) $(CPPFLAGS) $(PGSRC) $(LDLIBS)
 
 videoBall.o: videoBall.cpp physics.h
 		$(CC) -c videoBall.cpp
 
 physics.o: physics.cpp physics.h
 		$(CC) -c physics.cpp
+
+pong.o: pong.cpp physics.h
+		$(CC) -c pong.cpp
 
 # myprogam: main.o physics.o
 #     gcc -o myprogram main.o foo.o
