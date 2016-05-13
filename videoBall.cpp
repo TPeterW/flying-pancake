@@ -110,7 +110,7 @@ int main(int argc, char **argv)
         outFrame.setTo(Scalar(0,0,0));      // set all of outFrame to be black
         outFrame.setTo(Scalar(255, 255, 255), foregroundMask);
 
-        drawCircle(outFrame, pt, RADIUS);
+        drawCircle(outFrame, pt, RADIUS, Scalar(255, 255, 255));
 
         imshow(win, outFrame);
 
