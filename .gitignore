@@ -26,6 +26,7 @@
 *.exe
 *.out
 *.app
+videoBall
 
 # OS X
 .DS_Store
@@ -38,5 +39,4 @@
 *.pgm
 
 # Others
-videoBall
 *.dSYM
