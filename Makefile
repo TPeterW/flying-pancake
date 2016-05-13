@@ -11,7 +11,7 @@ all: videoBall
 	$(CC) -o$(BIN) $(CPPFLAGS) $(SRC) $(LDLIBS)
 
 clean:
-	rm -f $(BIN) *.o core*
+	rm -rf $(BIN) *.o core* *.dSYM
 
 videoBall: $(OBJ)
 		$(CC) -o$(BIN) $(CPPFLAGS) $(SRC) $(LDLIBS)
