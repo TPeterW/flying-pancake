@@ -1,26 +1,32 @@
 CC = g++
 CPPFLAGS = -O2 -W -Wall -g
-VBSRC = physics.cpp videoBall.cpp
+VBSRC = physics.cpp videoBall.cpp layers.cpp
 PGSRC = physics.cpp pong.cpp
+LYSRC = physics.cpp layers.cpp
 VBOBJ = videoBall.o physics.o
 PGOBJ = pong.o physics.o
+LYOBJ = layers.o physics.o
 LDLIBS = -lopencv_core -lopencv_highgui -lopencv_imgproc -lopencv_video
 
 LINK = physics
 VBALL = videoBall
 PONG = pong
+LAYERS = layers
 
-all: videoBall pong
+all: videoBall pong layers
 # all: pong
 
 clean:
-	rm -rf $(VBALL) $(PONG) *.o core* *.dSYM
+	rm -rf $(VBALL) $(PONG) $(LAYERS) *.o core* *.dSYM
 
 videoBall: $(VBOBJ)
 		$(CC) -o$(VBALL) $(CPPFLAGS) $(VBSRC) $(LDLIBS)
-		
+
 pong: $(PGOBJ)
 		$(CC) -o$(PONG) $(CPPFLAGS) $(PGSRC) $(LDLIBS)
+
+layers:$(LYOBJ)
+		$(CC) -o$(LAYERS) $(CPPFLAGS) $(LYSRC) $(LDLIBS)
 
 videoBall.o: videoBall.cpp physics.h
 		$(CC) -c videoBall.cpp
