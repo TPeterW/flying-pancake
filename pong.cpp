@@ -34,7 +34,7 @@ int main(int argc, char **argv)
         exit(1);
     }
 
-    namedWindow(win, CV_WINDOW_AUTOSIZE);
+    namedWindow(win, 3);
 
     Mat fgMaskMOG;
     BackgroundSubtractorMOG2 MOG;
@@ -123,7 +123,7 @@ int main(int argc, char **argv)
             fgMaskMOG.setTo(Scalar(255, 255, 255), foregroundMask);     // clean up
             fgMaskMOG.setTo(Scalar(0, 0, 0), backgroundMask);
             handFrame = fgMaskMOG(ballRegion);
-            
+
             int halfRad = RADIUS / 2;
             // top left
             small.x = halfRad;   small.y = halfRad;

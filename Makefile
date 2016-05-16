@@ -1,6 +1,6 @@
 CC = g++
 CPPFLAGS = -O2 -W -Wall -g
-VBSRC = physics.cpp videoBall.cpp layers.cpp
+VBSRC = physics.cpp videoBall.cpp
 PGSRC = physics.cpp pong.cpp
 LYSRC = physics.cpp layers.cpp
 VBOBJ = videoBall.o physics.o

@@ -114,7 +114,7 @@ int pongDir(Point *momentum, Point *pt, int height, int width)
         momentum->y = -(momentum->y * 1.05);   // bounce back up
         return 0;
     }
-    
+
     // speed cap
     if (momentum->x * momentum->x + momentum->y * momentum->y > 200) {
         momentum->y = momentum->y * 0.98;
@@ -133,3 +133,78 @@ void reset_board(Point *pt, Point *momentum, int width, int height){
     momentum->x = rand() % 20 - 10;
     momentum->y = rand() % 20 - 10;
 }
+/*
+void cvShowManyImages(char* title, int nArgs, Mat im1, Mat im2) {
+
+     // img - Used for getting the arguments
+     IplImage *img;
+
+     // [[DispImage]] - the image in which input images are to be copied
+     IplImage *DispImage;
+
+     int size;
+     int i;
+     int m, n;
+     int x, y;
+
+     // w - Maximum number of images in a row
+     // h - Maximum number of images in a column
+     int w, h;
+
+     // scale - How much we have to resize the image
+    float scale;
+     int max;
+
+    // If the number of arguments is lesser than 0 or greater than 12
+     // return without displaying
+
+
+     w = 2; h = 1;
+     size = 300;
+
+
+    // Create a new 3 channel image
+    [[DispImage]] = cvCreateImage( cvSize(100 + size*w, 60 + size*h), 8, 3 );
+
+
+        // Find the width and height of the image
+        x1 = img1->width;
+        y1 = img1->height;
+        x2 = img2->width;
+        y2 = img2->height;
+        // Find whether height or width is greater in order to resize the image
+        max = (x > y)? x: y;
+
+        // Find the scaling factor to resize the image
+        scale = (float) ( (float) max / size );
+
+        // Used to Align the images
+        if( i % w == 0 && m!= 20) {
+            m = 20;
+            n+= 20 + size;
+        }
+
+        // Set the image ROI to display the current image
+        cvSetImageROI(DispImage, cvRect(m, n, (int)( x/scale ), (int)( y/scale )));
+
+        // Resize the input image and copy the it to the Single Big Image
+        cvResize(img, DispImage);
+
+        // Reset the ROI in order to display the next image
+        cvResetImageROI(DispImage);
+    }
+
+    // Create a new window, and show the Single Big Image
+    cvNamedWindow( title, 1 );
+    cvShowImage( title, DispImage);
+
+    cvWaitKey();
+    cvDestroyWindow(title);
+
+    // End the number of arguments
+    va_end(args);
+
+    // Release the Image Memory
+    cvReleaseImage(&DispImage);
+  }
+*/

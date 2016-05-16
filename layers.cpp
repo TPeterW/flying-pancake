@@ -196,9 +196,8 @@ int main(int argc, char **argv)
         // Put score frame onto image
         addWeighted(outFrame, 0.75, scoreFrame, 1.0, 1, outFrame, -1);
 
-    
 
-        imshow(ballwin)
+
         if (layer ==0){
           imshow(win, inputFrame);
         }else if(layer == 1 ){
