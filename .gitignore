@@ -28,6 +28,7 @@
 *.app
 videoBall
 pong
+layers
 
 # OS X
 .DS_Store
